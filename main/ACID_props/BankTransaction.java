@@ -12,7 +12,7 @@ public class BankTransaction {
   private static final  String USER = "safwankherallah";
   private static final String PASSWORD = "123456";
 
-  public  void transferMoney( String sourceAccountNumber,
+  public static void transferMoney(String sourceAccountNumber,
       String destinationAccountNumber,
       BigDecimal amount) throws SQLException {
     Connection conn = null;
@@ -26,7 +26,9 @@ public class BankTransaction {
       );
 
       checkBalanceStmt.setString(1, sourceAccountNumber);
+
       ResultSet rs = checkBalanceStmt.executeQuery();
+
       if(!rs.next() || rs.getBigDecimal("balance").compareTo(amount) < 0 ){
         conn.rollback();
         throw  new RuntimeException("Insufficient funds");
@@ -49,6 +51,10 @@ public class BankTransaction {
 
       addStmt.setBigDecimal(1, amount);
       addStmt.setString(2, destinationAccountNumber);
+      addStmt.executeUpdate();
+
+      conn.commit(); // Commit the transaction
+
     } catch (SQLException e) {
       if(conn != null){
         conn.rollback(); // Roll back in case of error
@@ -61,6 +67,14 @@ public class BankTransaction {
       }
     }
 
+  }
+
+  public static void main(String[] args) {
+    try {
+      transferMoney("543216789", "678954321", BigDecimal.valueOf(10));
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
   }
 
 }
