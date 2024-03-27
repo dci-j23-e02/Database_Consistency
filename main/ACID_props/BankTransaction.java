@@ -77,4 +77,9 @@ public class BankTransaction {
     }
   }
 
+
+  // Step methods:
+  // check for capacity : boolean
+
+
 }
